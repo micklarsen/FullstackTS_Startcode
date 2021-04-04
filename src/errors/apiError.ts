@@ -1,23 +1,14 @@
-/*
-  See this article for details about custom errors:
-  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
-*/
-
-// ADD THIS FILE TO A FOLDER errors 
-
 class ApiError extends Error {
-    constructor(msg: string, public errorCode?: number) {
+    errorCode: number
+    constructor(msg: string, public eCode?: number) {
         super(msg)
-
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
+        if (Error.captureStackTrace) { // Maintains proper stack trace for where our error was thrown (only available on V8)
             Error.captureStackTrace(this, ApiError)
         }
-
         this.name = 'ApiError'
-        this.errorCode = errorCode || 500;
-
+        this.errorCode = eCode || 500;
     }
 }
+
 
 export { ApiError }

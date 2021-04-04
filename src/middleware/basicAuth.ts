@@ -1,12 +1,16 @@
 import auth from 'basic-auth'
-import compare from 'tsscmp'
 import { Request, Response } from "express"
-import facade from "../facades/DummyDB-Facade"
+import FriendFacade from "../facades/friendFacade"
+
+
+let facade: FriendFacade;
 
 
 const authMiddleware = async function (req: Request, res: Response, next: Function) {
+    if (!facade) {
+        facade = new FriendFacade(req.app.get("db")); //We have access to the global app-object via the request object
+    }
     var credentials = auth(req)
-
     if (credentials && await check(credentials.name, credentials.pass, req)) {
         next()
     } else {
@@ -17,14 +21,15 @@ const authMiddleware = async function (req: Request, res: Response, next: Functi
 }
 
 
-async function check(email: string, pass: string, req: any) {
-    const user = await facade.getFriend(email);
-    if (user && compare(pass, user.password)) {
-        req.credentials = { userName: user.email }
+async function check(userName: string, pass: string, req: any) {
+
+    //if (user && compare(pass, user.password)) {
+    const verifiedUser = await facade.getVerifiedUser(userName, pass)
+    if (verifiedUser) {
+        req.credentials = { userName: verifiedUser.email, role: verifiedUser.role }
         return true
     }
     return false
-
 }
 
 
