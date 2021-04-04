@@ -3,8 +3,9 @@
 1. Clone the project
 2. Create your own .env file in the root (Example provided below)
 3. Run `npm install`
+4. Run `ts-node src/utils/makeTestFriend.ts` to create test users in DB
 4. Run for development with `npm run dev` or `npm run dev:debug`
-4. Have fun 🍻
+6. Have fun 🍻
 
 ```
 # ** UNCOMMENT THIS WHEN DEPLOYED **
