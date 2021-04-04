@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "ff60d43a-9c7e-4f12-b85f-3f8cc3c4a377",
+		"name": "fullstackJSTS-F2W1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/friends/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"friends",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "By Email",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/friends/pp@b.dk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"friends",
+						"pp@b.dk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New friend",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Donald\",\r\n    \"lastName\": \"Duck\",\r\n    \"email\": \"dd@b.dk\",\r\n    \"password\": \"secret\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/friends/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"friends",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Orange\",\r\n    \"lastName\": \"man\",\r\n    \"email\": \"out@bye.dk\",\r\n    \"password\": \"secret\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/friends/id3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"friends",
+						"id3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"id2\",\r\n    \"firstName\": \"Donaldd\",\r\n    \"lastName\": \"Duck\",\r\n    \"email\": \"dd@b.dk\",\r\n    \"password\": \"secret\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/friends/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"friends",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
