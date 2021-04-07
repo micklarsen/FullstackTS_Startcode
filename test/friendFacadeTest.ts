@@ -69,6 +69,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
             expect(status).to.be.not.null;
             expect(status).to.be.true;
         })
+        
         it("It should return false, for a user that does not exist", async () => {
             const status = await facade.deleteFriend("does_not@exist.com");
             expect(status).to.be.not.null;
@@ -83,6 +84,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
             expect(status).to.be.not.null;
             expect(status).to.be.length(2);
         })
+
         it("Should not be more than two friends in the list", async () => {
             const status = await facade.getAllFriends();
             expect(status).to.be.not.null;
@@ -97,6 +99,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
             expect(status).to.be.not.null;
             expect(status.firstName).to.be.equal("Donald");
         })
+
         it("It should not find xxx.@b.dk", async () => {
             const status = await facade.getFriend("xxx.@b.dk");
             expect(status).to.be.null;
@@ -114,6 +117,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
             const verifiedFrodo = await facade.getVerifiedUser("fb@michaeldelving.sh", "wrong_password")
             expect(verifiedFrodo).to.be.null;
         })
+
         it("It should NOT validate a non-existing users credentials", async () => {
             const nonExistingUser = await facade.getVerifiedUser("does_not@exist.com", "wrong_password")
             expect(nonExistingUser).to.be.null;

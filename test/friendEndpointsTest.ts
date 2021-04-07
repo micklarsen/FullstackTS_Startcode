@@ -39,7 +39,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
 
 
     describe("While attempting to get all users", function () {
-        it("it should get three users when authenticated", async () => {
+        it("It should get three users when authenticated", async () => {
             const response = await request
                 .get('/api/friends/all')
                 .auth("pp@b.dk", "secret")
@@ -47,7 +47,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
             expect(response.body.length).to.equal(3)
         })
 
-        it("it should get a 401 when NOT authenticated", async () => {
+        it("It should get a 401 when NOT authenticated", async () => {
             const response = await request.get('/api/friends/all')
             expect(response.status).to.be.equal(401);
         })
@@ -55,7 +55,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
 
 
     describe("While attempting to add a user", function () {
-        it("it should Add the user Jan Olsen", async () => {
+        it("It should Add the user Jan Olsen", async () => {
             const newFriend = { firstName: "Jan", lastName: "Olsen", email: "jan@b.dk", password: "secret" }
             const response = await request.post('/api/friends').send(newFriend)
             expect(response.status).to.equal(200)
@@ -77,6 +77,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
                 .auth("pp@b.dk", "secret")
             expect(response.body.firstName).to.equal("Peter");
         })
+
         it("It should edit the logged in user", async () => {
             const edited = { firstName: "Kaptajn", lastName: "Klo", email: "pp@b.dk", password: "secret" };
             const response = await request
@@ -96,6 +97,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
                 .auth("aa@a.dk", "secret")
             expect(response.body.firstName).to.equal("Donald");
         })
+
         it("It should not, allow admin-users to find a non-existing user", async () => {
             const search = "dd@b.dk"
             const response = await request
@@ -124,6 +126,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
                 .auth("aa@a.dk", "secret")
             expect(response.body.firstName).to.equal("Kaptajn");
         })
+
         it("It should NOT allow a non-admin user to edit Peter Pan", async () => {
             const reqBody = { firstName: "Kaptajn", lastName: "Klo", email: "pp@b.dk", password: "secret" };
             const search = "pp@b.dk";
@@ -144,6 +147,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
                 .auth("aa@a.dk", "secret")
             expect(response.body).to.equal("User deleted");
         })
+
         it("It should NOT allow a non-admin user to delete Donald Duck", async () => {
             const search = "dd@b.dk";
             const response = await request
