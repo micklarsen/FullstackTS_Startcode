@@ -11,8 +11,6 @@ const app = express();
 dotenv.config();
 
 
-
-
 //Winston logger
 import logger, { stream } from "./middleware/winstonLogger";
 const morganFormat = process.env.NODE_ENV == "production" ? "combined" : "dev"
