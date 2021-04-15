@@ -40,11 +40,10 @@ router.post('/', async function (req, res, next) {
 /* ALL ENDPOINTS BELOW REQUIRES AUTHENTICATION */
 
 import authMiddleware from "../middleware/basicAuth"
-
 const USE_AUTHENTICATION = !process.env["SKIP_AUTHENTICATION"];
 
 if (USE_AUTHENTICATION) {
-    router.use(authMiddleware);
+  router.use(authMiddleware);
 }
 
 

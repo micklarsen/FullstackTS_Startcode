@@ -5,17 +5,19 @@ import { Request, Response } from "express"
 /* import simpleLogger from "./middleware/simpleLogger"; */
 import { ApiError } from "./errors/apiError";
 import friendsRoutesAuth from "./routes/FriendRoutesAuth";
+const cors = require("cors");
 
 const app = express();
 
-dotenv.config();
+app.use(cors());
 
+dotenv.config();
 
 //Winston logger
 import logger, { stream } from "./middleware/winstonLogger";
 const morganFormat = process.env.NODE_ENV == "production" ? "combined" : "dev"
 app.use(require("morgan")(morganFormat, { stream }));
-app.set("logger", logger);
+app.set("logger", logger); //Sætter logger på global app. req.app.get("logger").log("info", "some message...")
 
 //Simple logger
 /* const debug = require("debug")("app") */
@@ -26,13 +28,48 @@ app.set("logger", logger);
 app.use(express.static(path.join(process.cwd(), "public")))
 
 
+app.use("/api/friends", friendsRoutesAuth)
+
+
 app.get("/demo", (req, res) => {
     res.send("Server is up");
 })
 
+import { schema } from './graphql/schema';
+import { graphqlHTTP } from 'express-graphql';
+import authMiddleware from "./middleware/basicAuth"
 
-app.use("/api/friends", friendsRoutesAuth)
 
+
+app.use("/graphql", authMiddleware)
+
+/* app.use("/graphql", (req, res, next) => {
+    const body = req.body;
+
+    console.log("req.body from app.use(/graphql:) "  + req.body); // **** THIS IS UNDEFINED *****
+    
+    if(!body){
+        console.log("Body is undefined");
+    }
+
+    if (body && body.query && body.query.includes("createFriend")) {
+        console.log("Create")
+        return next();
+    }
+    if (body && body.operationName && body.query.includes("IntrospectionQuery")) {
+        return next();
+    }
+    if (body && body.query && (body.mutation || body.query)) {
+        return authMiddleware(req, res, next)
+    }
+    next()
+}) */
+
+
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+}));
 
 app.use("/api", (req: any, res: any, next) => {
     res.status(404).json({ errorCode: 404, msg: "not found" })
@@ -47,7 +84,7 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
         next(err)
     }
 })
-  
+
 
 
 export default app;
