@@ -9,7 +9,7 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors());
+//app.use(cors());
 
 dotenv.config();
 
@@ -35,22 +35,22 @@ app.get("/demo", (req, res) => {
     res.send("Server is up");
 })
 
-import { schema } from './graphql/schema';
-import { graphqlHTTP } from 'express-graphql';
+
+
+
+
 import authMiddleware from "./middleware/basicAuth"
+//app.use("/graphql", authMiddleware)
 
-
-
-app.use("/graphql", authMiddleware)
 
 /* app.use("/graphql", (req, res, next) => {
+    
     const body = req.body;
 
-    console.log("req.body from app.use(/graphql:) "  + req.body); // **** THIS IS UNDEFINED *****
-    
     if(!body){
         console.log("Body is undefined");
     }
+
 
     if (body && body.query && body.query.includes("createFriend")) {
         console.log("Create")
@@ -66,7 +66,12 @@ app.use("/graphql", authMiddleware)
 }) */
 
 
-app.use('/graphql', graphqlHTTP({
+
+// GraphQL
+import { graphqlHTTP } from 'express-graphql';
+import { schema } from './graphql/schema';
+
+app.use('/graphql', authMiddleware, graphqlHTTP({
     schema: schema,
     graphiql: true,
 }));
