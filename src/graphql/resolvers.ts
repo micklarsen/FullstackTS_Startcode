@@ -5,8 +5,8 @@ import { Request } from "express";
 import fetch from "node-fetch"
 
 
-let friendFacade: FriendFacade;
 
+let friendFacade: FriendFacade;
 
 /*
 We don't have access to app or the Router so we need to set up the facade in another way
@@ -20,17 +20,18 @@ export function setupFacade(db: any) {
     }
 }
 
-
 // resolver map
 export const resolvers = {
     Query: {
 
         getAllFriends: (root: any, _: any, req: any) => {
-            
-            if ( !req.credentials.role || req.credentials.role !== "admin") {
-              throw new ApiError("Not Authorized", 401)
+
+            if (!req.credentials.role || req.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
             }
+
             return friendFacade.getAllFriendsV2()
+
         },
 
         getAllFriendsProxy: async (root: object, _: any, context: Request) => {
@@ -46,11 +47,42 @@ export const resolvers = {
                 if (r.status >= 400) { throw new Error(r.statusText) }
                 return r.json()
             })
+        },
+
+        getFriendByEmail: (root: any, { input }: { input: string }, req: any) => {
+
+            if (!req.credentials.role || req.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
+            }
+
+            const friend = friendFacade.getFriendFromEmail(input);
+            return friend;
+        },
+
+        getFriendById: (root: any, { input }: { input: string }, req: any) => {
+
+            if (!req.credentials.role || req.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
+            }
+
+            const friend = friendFacade.getFriendFromId(input);
+            return friend;
         }
+
     },
     Mutation: {
         createFriend: async (_: object, { input }: { input: IFriend }) => {
             return friendFacade.addFriendV2(input)
+        },
+
+        updateFriend: async (_: object, { input }: { input: IFriend }) => {
+            const email = input.email;
+            return friendFacade.editFriendV2(email, input)
+        },
+
+        deleteFriend: async (root: any, { id }: { id: string }) => {
+            console.log("resolver: " + id)
+            return friendFacade.deleteFriendV2(id)
         }
     },
 };

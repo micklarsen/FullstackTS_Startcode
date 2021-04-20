@@ -9,6 +9,8 @@ const cors = require("cors");
 
 const app = express();
 
+app.use(express.json()); 
+
 //app.use(cors());
 
 dotenv.config();
@@ -36,22 +38,11 @@ app.get("/demo", (req, res) => {
 })
 
 
-
-
-
 import authMiddleware from "./middleware/basicAuth"
 //app.use("/graphql", authMiddleware)
 
-
-/* app.use("/graphql", (req, res, next) => {
-    
+app.use("/graphql", (req, res, next) => {
     const body = req.body;
-
-    if(!body){
-        console.log("Body is undefined");
-    }
-
-
     if (body && body.query && body.query.includes("createFriend")) {
         console.log("Create")
         return next();
@@ -59,26 +50,20 @@ import authMiddleware from "./middleware/basicAuth"
     if (body && body.operationName && body.query.includes("IntrospectionQuery")) {
         return next();
     }
-    if (body && body.query && (body.mutation || body.query)) {
+    if (body.query && (body.mutation || body.query)) {
         return authMiddleware(req, res, next)
     }
     next()
-}) */
+})
 
 
-
-// GraphQL
 import { graphqlHTTP } from 'express-graphql';
 import { schema } from './graphql/schema';
 
-app.use('/graphql', authMiddleware, graphqlHTTP({
+app.use('/graphql', graphqlHTTP({
     schema: schema,
     graphiql: true,
 }));
-
-app.use("/api", (req: any, res: any, next) => {
-    res.status(404).json({ errorCode: 404, msg: "not found" })
-})
 
 
 //Errors for friend API handled - other errors are passed on

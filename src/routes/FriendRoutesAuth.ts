@@ -25,7 +25,7 @@ router.use(async (req, res, next) => {
 // Does not require authentication
 router.post('/', async function (req, res, next) {
     try {
-        const status = await facade.addFriend(req.body)
+        const status = await facade.addFriendV2(req.body)
         res.json({ status })
     } catch (err) {
         debug(err)
@@ -48,7 +48,7 @@ if (USE_AUTHENTICATION) {
 
 
 router.get("/all", async (req: any, res) => {
-    const friends = await facade.getAllFriends();
+    const friends = await facade.getAllFriendsV2();
     const friendsDTO = friends.map(friend => {
         const { firstName, lastName, email } = friend
         return { firstName, lastName, email }
@@ -128,7 +128,7 @@ router.put("/:email", async function (req: any, res, next) {
             throw new ApiError("user not found", 404)
         }
         let newFriend = req.body;
-        const friend = await facade.editFriend(email, newFriend)
+        const friend = await facade.editFriendV2(email, newFriend)
         res.json(friend)
     } catch (err) {
         debug(err)
@@ -148,9 +148,9 @@ router.delete('/:email', async function (req: any, res, next) {
             throw new ApiError("Not Authorized", 401)
         }
         const userId = req.params.email;
-        const friend = await facade.deleteFriend(userId);
+        const friend = await facade.deleteFriendV2(userId);
 
-        if (friend == false) {
+        if (friend == null) {
             throw new ApiError("user not found", 404)
         }
         res.json("User deleted");

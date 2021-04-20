@@ -23,6 +23,8 @@ const typeDefs = `
         """
         getAllFriendsProxy: [Friend]!
         
+        getFriendByEmail(input: String): Friend
+        getFriendById(input: String): Friend
     }
     input FriendInput {
         firstName: String!
@@ -41,7 +43,8 @@ const typeDefs = `
         Allows anyone (non authenticated users) to create a new friend
         """
         createFriend(input: FriendInput): Friend
-       
+        updateFriend(input: FriendEditInput): Friend
+        deleteFriend(id: ID!): String
     }
 `;
 
