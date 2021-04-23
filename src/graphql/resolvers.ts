@@ -5,7 +5,6 @@ import { Request } from "express";
 import fetch from "node-fetch"
 
 
-
 let friendFacade: FriendFacade;
 
 /*
@@ -20,22 +19,18 @@ export function setupFacade(db: any) {
     }
 }
 
+
 // resolver map
 export const resolvers = {
     Query: {
-
         getAllFriends: (root: any, _: any, req: any) => {
-
             if (!req.credentials.role || req.credentials.role !== "admin") {
                 throw new ApiError("Not Authorized", 401)
             }
-
             return friendFacade.getAllFriendsV2()
-
         },
 
         getAllFriendsProxy: async (root: object, _: any, context: Request) => {
-
             let options: any = { method: "GET" }
 
             //This part only required if authentication is required
@@ -49,6 +44,7 @@ export const resolvers = {
             })
         },
 
+
         getFriendByEmail: (root: any, { input }: { input: string }, req: any) => {
 
             if (!req.credentials.role || req.credentials.role !== "admin") {
@@ -59,6 +55,7 @@ export const resolvers = {
             return friend;
         },
 
+        
         getFriendById: (root: any, { input }: { input: string }, req: any) => {
 
             if (!req.credentials.role || req.credentials.role !== "admin") {

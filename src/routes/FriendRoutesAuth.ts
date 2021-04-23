@@ -4,6 +4,7 @@ const router = Router();
 import { ApiError } from "../errors/apiError"
 import FriendFacade from "../facades/friendFacade"
 const debug = require("debug")("FriendRoutesAuth")
+import base64 from "base-64";
 
 let facade: FriendFacade;
 
@@ -37,13 +38,24 @@ router.post('/', async function (req, res, next) {
     }
 })
 
-/* ALL ENDPOINTS BELOW REQUIRES AUTHENTICATION */
+
+router.post("/login", async (req, res, next) => {
+    const { userName, password } = req.body;
+    const user = await facade.getVerifiedUser(userName, password)
+    if (!user) {
+        return next(new ApiError("Failded to login", 400))
+    }
+    const base64AuthString = "Basic " + base64.encode(userName + ":" + password)
+    res.json({ base64AuthString, user: user.email, role: user.role })
+})
+
+/* ALL ENDPOINTS BELOW REQUIRES AUTHENTICATION DUE TO THE MIDDLEWARE*/
 
 import authMiddleware from "../middleware/basicAuth"
 const USE_AUTHENTICATION = !process.env["SKIP_AUTHENTICATION"];
 
 if (USE_AUTHENTICATION) {
-  router.use(authMiddleware);
+    router.use(authMiddleware);
 }
 
 
@@ -59,14 +71,14 @@ router.get("/all", async (req: any, res) => {
 
 
 /* Authenticated users can edit themselves */
- 
+
 router.put('/edit', async function (req: any, res, next) {
     try {
         if (!USE_AUTHENTICATION) {
             throw new ApiError("This endpoint requires authentication", 500)
         }
         const email = req.credentials.userName;
-        const friend = await facade.editFriend(email, req.body)
+        const friend = await facade.editFriendV2(email, req.body)
         res.json(friend)
     } catch (err) {
         debug(err)
@@ -83,7 +95,7 @@ router.get("/me", async (req: any, res, next) => {
             throw new ApiError("This endpoint requires authentication", 500)
         }
         const emailId = req.credentials.userName;
-        const friend = await facade.getFriend(emailId);
+        const friend = await facade.getFriendFromEmail(emailId);
 
         const { firstName, lastName, email, role } = friend;
         const friendDTO = { firstName, lastName, email, role }
@@ -94,7 +106,6 @@ router.get("/me", async (req: any, res, next) => {
     }
 })
 
-/* Endpoints below require admin rights */
 
 /* Admin role can fetch everyone */
 router.get("/:email", async (req: any, res, next) => {
@@ -123,7 +134,7 @@ router.put("/:email", async function (req: any, res, next) {
             throw new ApiError("Not Authorized", 401)
         }
         const email = req.params.email;
-        const f = await facade.getFriend(email);
+        const f = await facade.getFriendFromEmail(email);
         if (f == null) {
             throw new ApiError("user not found", 404)
         }
@@ -148,7 +159,7 @@ router.delete('/:email', async function (req: any, res, next) {
             throw new ApiError("Not Authorized", 401)
         }
         const userId = req.params.email;
-        const friend = await facade.deleteFriendV2(userId);
+        const friend = await facade.deleteFriend(userId);
 
         if (friend == null) {
             throw new ApiError("user not found", 404)

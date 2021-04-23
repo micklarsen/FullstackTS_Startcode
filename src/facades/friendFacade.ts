@@ -133,79 +133,94 @@ class FriendsFacade {
         return this.findOne({ email: friendEmail })
     }
 
-
-
-        /* ~~~~~~~~ OLD FACADE ~~~~~~~~ */
-
+    
     /**
-     * 
-     * @param friend 
-     * @throws ApiError if validation fails
+     * Use this method for authentication
+     * @param friendEmail 
+     * @param password 
+     * @returns the user if he could be authenticated, otherwise null
      */
-    async addFriend(friend: IFriend): Promise<{ id: String }> {
-        const status = USER_INPUT_SCHEMA.validate(friend);
-        if (status.error) {
-            throw new ApiError(status.error.message, 400)
+     async getVerifiedUser(friendEmail: string, password: string): Promise<IFriend | null> {
+        const friend: IFriend = await this.friendCollection.findOne({ email: friendEmail })
+        if (friend && await bcrypt.compare(password, friend.password)) {
+            return friend
         }
+        return Promise.resolve(null)
+    }    
 
-        try {
-            const hashedpw = await bcrypt.hash(friend.password, BCRYPT_ROUNDS);
-            const f = { ...friend, password: hashedpw }
 
-            await this.friendCollection.insertOne(
-                {
-                    firstName: f.firstName,
-                    lastName: f.lastName,
-                    email: f.email,
-                    password: f.password,
-                    role: "user",
-                    createTime: new Date()
-                }
-            )
 
-            return this.friendCollection.findOne({ email: f.email })
-        } catch (error) {
-            throw new ApiError(error);
-        }
-    }
+//         /* ~~~~~~~~ OLD FACADE ~~~~~~~~ */
 
-    /**
-     * TODO
-     * @param email 
-     * @param friend 
-     * @throws ApiError if validation fails or friend was not found
-     */
-    async editFriend(email: string, friend: IFriend): Promise<{ modifiedCount: number }> {
-        const status = USER_INPUT_SCHEMA.validate(friend);
-        if (status.error) {
-            throw new ApiError(status.error.message, 400)
-        }
+//     /**
+//      * 
+//      * @param friend 
+//      * @throws ApiError if validation fails
+//      */
+//     async addFriend(friend: IFriend): Promise<{ id: String }> {
+//         const status = USER_INPUT_SCHEMA.validate(friend);
+//         if (status.error) {
+//             throw new ApiError(status.error.message, 400)
+//         }
 
-        try {
-            const hashedpw = await bcrypt.hash(friend.password, BCRYPT_ROUNDS);
-            const f = { ...friend, password: hashedpw }
+//         try {
+//             const hashedpw = await bcrypt.hash(friend.password, BCRYPT_ROUNDS);
+//             const f = { ...friend, password: hashedpw }
 
-            return await this.friendCollection.updateOne(
-                { email: email },
-                {
-                    $set: {
-                        firstName: f.firstName,
-                        lastName: f.lastName,
-                        email: f.email,
-                        password: f.password,
-                        role: "user"
-                    },
-                    $currentDate: { lastModified: true },
+//             await this.friendCollection.insertOne(
+//                 {
+//                     firstName: f.firstName,
+//                     lastName: f.lastName,
+//                     email: f.email,
+//                     password: f.password,
+//                     role: "user",
+//                     createTime: new Date()
+//                 }
+//             )
 
-                }
-            )
+//             return this.friendCollection.findOne({ email: f.email })
+//         } catch (error) {
+//             throw new ApiError(error);
+//         }
+//     }
 
-            //return this.friendCollection.findOne({ email: f.email })
-        } catch (error) {
-            throw new ApiError(error);
-        }
+    // /**
+    //  * TODO
+    //  * @param email 
+    //  * @param friend 
+    //  * @throws ApiError if validation fails or friend was not found
+    //  */
+    // async editFriend(email: string, friend: IFriend): Promise<{ modifiedCount: number }> {
+    //     const status = USER_INPUT_SCHEMA.validate(friend);
+    //     if (status.error) {
+    //         throw new ApiError(status.error.message, 400)
+    //     }
 
-    }
+    //     try {
+    //         const hashedpw = await bcrypt.hash(friend.password, BCRYPT_ROUNDS);
+    //         const f = { ...friend, password: hashedpw }
+
+    //         return await this.friendCollection.updateOne(
+    //             { email: email },
+    //             {
+    //                 $set: {
+    //                     firstName: f.firstName,
+    //                     lastName: f.lastName,
+    //                     email: f.email,
+    //                     password: f.password,
+    //                     role: "user"
+    //                 },
+    //                 $currentDate: { lastModified: true },
+
+    //             }
+    //         )
+
+    //         //return this.friendCollection.findOne({ email: f.email })
+    //     } catch (error) {
+    //         throw new ApiError(error);
+    //     }
+
+    // }
 
     /**
      * 
@@ -224,15 +239,15 @@ class FriendsFacade {
         }
     }
 
-/*     async getAllFriends(): Promise<Array<IFriend>> {
-        try {
-            const users: unknown = await this.friendCollection.find({}).toArray();
-            return users as Array<IFriend>
+// /*     async getAllFriends(): Promise<Array<IFriend>> {
+//         try {
+//             const users: unknown = await this.friendCollection.find({}).toArray();
+//             return users as Array<IFriend>
 
-        } catch (error) {
-            throw new ApiError(error);
-        }
-    } */
+//         } catch (error) {
+//             throw new ApiError(error);
+//         }
+//     } */
 
     /**
      * 
@@ -249,21 +264,6 @@ class FriendsFacade {
             throw new ApiError(error);
         }
     }
-
-    /**
-     * Use this method for authentication
-     * @param friendEmail 
-     * @param password 
-     * @returns the user if he could be authenticated, otherwise null
-     */
-    async getVerifiedUser(friendEmail: string, password: string): Promise<IFriend | null> {
-        const friend: IFriend = await this.friendCollection.findOne({ email: friendEmail })
-        if (friend && await bcrypt.compare(password, friend.password)) {
-            return friend
-        }
-        return Promise.resolve(null)
-    }
-
 }
 
 export default FriendsFacade;

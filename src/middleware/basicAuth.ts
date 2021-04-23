@@ -16,8 +16,8 @@ const authMiddleware = async function (req: Request, res: Response, next: Functi
     } else {
         res.statusCode = 401
         res.setHeader('WWW-Authenticate', 'Basic realm="example"')
-        res.end('Access denied')
-        //res.json({ erros: [{message: 'Access denied' }] });
+        //res.end('Access denied')
+        res.json({ erros: [{message: 'Access denied' }] }); //GraphQL expects json response
     }
 }
 

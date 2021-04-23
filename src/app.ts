@@ -5,13 +5,13 @@ import { Request, Response } from "express"
 /* import simpleLogger from "./middleware/simpleLogger"; */
 import { ApiError } from "./errors/apiError";
 import friendsRoutesAuth from "./routes/FriendRoutesAuth";
-const cors = require("cors");
+import cors from "cors";
 
 const app = express();
 
 app.use(express.json()); 
 
-//app.use(cors());
+app.use(cors());
 
 dotenv.config();
 
