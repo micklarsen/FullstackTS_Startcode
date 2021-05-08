@@ -9,7 +9,7 @@ import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 
 import bcryptjs, { hash } from "bcryptjs"
-import { InMemoryDbConnector } from "../src/config/dbConnector"
+import { InMemoryDbConnector } from "../src/config/DBConnector"
 import { ApiError } from "../src/errors/apiError";
 
 let friendCollection: mongo.Collection;
@@ -39,7 +39,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
     describe("Verify the addFriend method", () => {
         it("It should Add the user Jan", async () => {
             const newFriend = { firstName: "Jan", lastName: "Olsen", email: "jan@b.dk", password: "secret" }
-            const status = await facade.addFriend(newFriend);
+            const status = await facade.addFriendV2(newFriend);
             expect(status).to.be.not.null
             const jan = await friendCollection.findOne({ email: "jan@b.dk" })
             expect(jan.firstName).to.be.equal("Jan")
@@ -47,7 +47,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
 
         it("It should not add a user with a role (validation fails)", async () => {
             const newFriend = { firstName: "Jan", lastName: "Olsen", email: "jan@b.dk", password: "secret", role: "admin" }
-            await expect(facade.addFriend(newFriend)).to.be.rejectedWith(ApiError)
+            await expect(facade.addFriendV2(newFriend)).to.be.rejectedWith(ApiError)
         })
     })
 
@@ -55,7 +55,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
     describe("Verify the editFriend method", () => {
         it("It should change lastName to Duck", async () => {
             const editedFriend = { firstName: "Donald", lastName: "Duck", email: "dt@example.com", password: "secret" };
-            const status = await facade.editFriend("dt@example.com", editedFriend);
+            const status = await facade.editFriendV2("dt@example.com", editedFriend);
             expect(status).to.be.not.null;
             const friend = await friendCollection.findOne({ email: "dt@example.com" });
             expect(friend.lastName).to.be.equal("Duck");
@@ -80,13 +80,13 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
 
     describe("Verify the getAllFriends method", () => {
         it("It should get two friends", async () => {
-            const status = await facade.getAllFriends();
+            const status = await facade.getAllFriendsV2();
             expect(status).to.be.not.null;
             expect(status).to.be.length(2);
         })
 
         it("Should not be more than two friends in the list", async () => {
-            const status = await facade.getAllFriends();
+            const status = await facade.getAllFriendsV2();
             expect(status).to.be.not.null;
             expect(status).to.be.not.length(3);
         })
@@ -119,7 +119,7 @@ describe("## VERIFY FRIENDS FACADE ##", () => {
         })
 
         it("It should NOT validate a non-existing users credentials", async () => {
-            const nonExistingUser = await facade.getVerifiedUser("does_not@exist.com", "wrong_password")
+            const nonExistingUser = await (await facade.getVerifiedUser("does_not@exist.com", "wrong_password"))
             expect(nonExistingUser).to.be.null;
         })
     })
