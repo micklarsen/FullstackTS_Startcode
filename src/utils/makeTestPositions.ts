@@ -22,7 +22,6 @@ async function makeTestPositions() {
     const status = await friendsCollection.insertMany([f1, f2, f3])
     debug(`Inserted ${status.insertedCount} test users`)
 
-    /// INSERT CODE_BLOCK-1
     const positionCollection = db.collection("positions")
     await positionCollection.deleteMany({});
     await positionCollection.createIndex({ "lastUpdated": 1 }, { expireAfterSeconds: 30 })

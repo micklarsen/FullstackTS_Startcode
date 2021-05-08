@@ -4,20 +4,20 @@ import { hash } from "bcryptjs"
 import { positionCreator, getLatitudeInside, getLatitudeOutside } from "../src/utils/geoUtils"
 import { ApiError } from "../src/errors/apiError"
 import chai from "chai";
-
-const expect = chai.expect;
+import chaiAsPromised from "chai-as-promised";
+import { InMemoryDbConnector } from "../src/config/DBConnector"
 
 const DIST_TO_SEARCH = 500;
+const expect = chai.expect;
 
-//use these two lines for more streamlined tests of promise operations
-import chaiAsPromised from "chai-as-promised";
-chai.use(chaiAsPromised);
-import { InMemoryDbConnector } from "../src/config/DBConnector"
 let positionCollection: mongo.Collection
 let friendsCollection: mongo.Collection
 let positionFacade: PositionFacade;
 
-describe("## Verify the Positions Facade ##", () => {
+chai.use(chaiAsPromised);
+
+
+describe("## Test the Positions Facade ##", () => {
 
     before(async function () {
         const client = await InMemoryDbConnector.connect();
@@ -30,7 +30,6 @@ describe("## Verify the Positions Facade ##", () => {
     })
 
     beforeEach(async () => {
-        //TODO -->/// INSERT CODE_BLOCK-2
         const hashedPW = await hash("secret", 8);
         await friendsCollection.deleteMany({});
 
@@ -55,6 +54,7 @@ describe("## Verify the Positions Facade ##", () => {
             const result = await positionFacade.addOrUpdatePosition("pp@b.dk", 2, 3)
             expect(result.name).to.be.equal("Peter Pan")
             expect(result.location.coordinates[0]).to.be.equal(2)
+            expect(result.location.coordinates[1]).to.be.equal(3)
         })
     })
 
